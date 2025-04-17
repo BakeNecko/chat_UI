@@ -52,7 +52,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
     command: bash scripts/prestart.sh
     env_file:
       - .env
@@ -75,6 +74,36 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - SENTRY_DSN=${SENTRY_DSN}
 
+  redis:
+    image: redis:latest
+    # environment:
+    #   - REDIS_PASSWORD=${REDIS_PASSWORD}
+    #   - REDIS_USER=${REDIS_USER}
+    #   - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redisdata:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    # command: >
+    #   sh -c '
+    #     mkdir -p /usr/local/etc/redis &&
+    #     echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+    #     echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+    #     echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+    #     echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
+    #     echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
+    #     echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+    #     redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+    #   '
+
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     restart: always
@@ -84,7 +113,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
       prestart:
         condition: service_completed_successfully
     env_file:
@@ -169,3 +197,4 @@ networks:
   traefik-public:
     # Allow setting it to false for testing
     external: true
+ 

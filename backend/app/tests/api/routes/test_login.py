@@ -17,7 +17,8 @@ def test_get_access_token(client: TestClient) -> None:
         "username": settings.FIRST_SUPERUSER,
         "password": settings.FIRST_SUPERUSER_PASSWORD,
     }
-    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+    r = client.post(
+        f"{settings.API_V1_STR}/login/access-token", data=login_data)
     tokens = r.json()
     assert r.status_code == 200
     assert "access_token" in tokens
@@ -29,7 +30,8 @@ def test_get_access_token_incorrect_password(client: TestClient) -> None:
         "username": settings.FIRST_SUPERUSER,
         "password": "incorrect",
     }
-    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
+    r = client.post(
+        f"{settings.API_V1_STR}/login/access-token", data=login_data)
     assert r.status_code == 400
 
 
@@ -86,7 +88,8 @@ def test_reset_password(client: TestClient, db: Session) -> None:
     )
     user = create_user(session=db, user_create=user_create)
     token = generate_password_reset_token(email=email)
-    headers = user_authentication_headers(client=client, email=email, password=password)
+    headers = user_authentication_headers(
+        client=client, email=email, password=password)
     data = {"new_password": new_password, "token": token}
 
     r = client.post(

@@ -10,7 +10,7 @@ export type Body_login_login_access_token = {
 }
 
 export type HTTPValidationError = {
-  detail?: Array<ValidationError>
+  detail?: Array<ValidationError> | string
 }
 
 export type ItemCreate = {
@@ -60,6 +60,12 @@ export type UserCreate = {
   is_superuser?: boolean
   full_name?: string | null
   password: string
+}
+
+export type UserShort = {
+  email: string
+  full_name?: string | null
+  id: string
 }
 
 export type UserPublic = {
@@ -219,3 +225,59 @@ export type UtilsTestEmailData = {
 export type UtilsTestEmailResponse = Message
 
 export type UtilsHealthCheckResponse = boolean
+
+export type DeleteChatData = {
+  chatID: number
+};
+
+export type CreateChatData = {
+  name: string
+  user_ids: number[]
+};
+
+export type ChatsPublic = {
+  id: number
+  chat_id: string
+  name: string
+  is_group: boolean
+  owner_id: number
+  owner: UserShort
+  users: UserShort[]
+};
+
+export type MyChatsResponse = {
+  group_chats: ChatsPublic[];
+  lc_chats: ChatsPublic[];
+};
+
+export type NotifyMsgRead = {
+  msg_id: number,
+  who_read: UserShort,
+}
+
+export type NotifyMsgType = 'MSG_READ' | 'CHAT_INVITED'; 
+
+export type NotifyMsg = {
+  type: NotifyMsgType,
+  content: string,
+  // TODO: Исп. meta_data для обновления компонентов
+  meta_data: any | NotifyMsgRead,
+}
+
+export type ChatMsgResponse = {
+  id: number,
+  sender_id: number,
+  content: string
+  updated_at: Date
+  sender: UserShort
+  read_by_users: UserShort[]
+  chat_id: string | number
+};
+
+export type MsgReadIdData = {
+  msgID: number
+}
+
+export type ChatHistoryByIdData = {
+  chatID: number
+}

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
+import { jwtDecode } from "jwt-decode";
 
 import {
   type Body_login_login_access_token as AccessToken,
@@ -44,7 +45,18 @@ const useAuth = () => {
   const login = async (data: AccessToken) => {
     const response = await LoginService.loginAccessToken({
       formData: data,
-    })
+    }) 
+    try {
+      const decodedToken = jwtDecode(response.access_token);
+
+      if (decodedToken.sub) {
+          localStorage.setItem("userId", decodedToken.sub);
+        } else {
+          console.error("sub не найден в JWT токене");
+      }
+    } catch (error) {
+      console.error("Ошибка декодирования токена:", error);
+    }
     localStorage.setItem("access_token", response.access_token)
   }
 
@@ -60,6 +72,7 @@ const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("access_token")
+    localStorage.removeItem('userId')
     navigate({ to: "/login" })
   }
 

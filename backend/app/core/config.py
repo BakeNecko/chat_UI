@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
     ] = []
+    # 172.19.0.1
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -69,6 +70,18 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_ASYNC_DATABASE_URI(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql+asyncpg",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
+        )
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587
@@ -85,6 +98,19 @@ class Settings(BaseSettings):
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+
+    REDIS_USER: str
+    REDIS_PASSWORD: str
+    REDIS_HOST: str
+    REDIS_PORT: str
+
+    @property
+    def get_redis_url(self):
+        # return (
+        #     f'redis://{self.REDIS_USER}:{self.REDIS_PASSWORD}@'
+        #     f'{self.REDIS_HOST}:{self.REDIS_PORT}/0'
+        # )
+        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0'
 
     @computed_field  # type: ignore[prop-decorator]
     @property

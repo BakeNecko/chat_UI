@@ -20,6 +20,8 @@ import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutChatListImport } from './routes/_layout/chat_list'
+import { Route as LayoutChatImport } from './routes/_layout/chat'
 
 // Create/Update Routes
 
@@ -68,6 +70,16 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutChatListRoute = LayoutChatListImport.update({
+  path: '/chat_list',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutChatRoute = LayoutChatImport.update({
+  path: '/chat/:type/:chatUuid/:chatId',
+  getParentRoute: () => LayoutRoute,
+} as any);
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -104,6 +116,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/chat_list': {
+      preLoaderRoute: typeof LayoutChatListRoute
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/chat/:type/:chatUuid/:chatId': {
+      preLoaderRoute: typeof ChatImport;
+      parentRoute: typeof LayoutRoute;
+    };
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
@@ -119,6 +139,8 @@ export const routeTree = rootRoute.addChildren([
     LayoutItemsRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutChatListRoute,
+    LayoutChatRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

@@ -44,6 +44,13 @@ import type {
   UtilsTestEmailData,
   UtilsTestEmailResponse,
   UtilsHealthCheckResponse,
+  MyChatsResponse,
+  ChatHistoryByIdData,
+  ChatMsgResponse,
+  ChatsPublic,
+  CreateChatData,
+  MsgReadIdData,
+  DeleteChatData,
 } from "./types.gen"
 
 export class ItemsService {
@@ -520,4 +527,78 @@ export class UtilsService {
       url: "/api/v1/utils/health-check/",
     })
   }
+}
+
+export class ChatService {
+  public static markReadMsg(
+    data: MsgReadIdData,
+  ): 
+  CancelablePromise<null> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/msg/mark_msg_read/{msg_id}",
+      path: {
+        msg_id: data.msgID,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  public static deleteChat(
+    data: DeleteChatData
+  ): CancelablePromise<ChatsPublic> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      path: {
+        id: data.chatID,
+      },
+      url: "/api/v1/groups/delete/{id}",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+    public static createChat(
+      data: CreateChatData
+    ): CancelablePromise<ChatsPublic> {
+      return __request(OpenAPI, {
+        method: "POST",
+        body: data,
+        url: "/api/v1/groups/create",
+        errors: {
+          422: "Validation Error",
+        },
+      })
+    }
+
+
+    public static getMyChats(): 
+    CancelablePromise<MyChatsResponse> {
+      return __request(OpenAPI, {
+        method: "GET",
+        url: "/api/v1/groups/my",
+        errors: {
+          422: "Validation Error",
+        },
+      })
+    }
+
+    public static getChatHistory(
+      data: ChatHistoryByIdData,
+    ): 
+    CancelablePromise<ChatMsgResponse[]> {
+      return __request(OpenAPI, {
+        method: "GET",
+        url: "/api/v1/msg/history/{chat_id}",
+        path: {
+          chat_id: data.chatID,
+        },
+        errors: {
+          422: "Validation Error",
+        },
+      })
+    }
 }

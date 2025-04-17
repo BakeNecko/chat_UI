@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.core.config import settings
-from app.models import User
+from app.models import Users
 
 
 def test_create_user(client: TestClient, db: Session) -> None:
@@ -19,7 +19,7 @@ def test_create_user(client: TestClient, db: Session) -> None:
 
     data = r.json()
 
-    user = db.exec(select(User).where(User.id == data["id"])).first()
+    user = db.exec(select(Users).where(Users.id == data["id"])).first()
 
     assert user
     assert user.email == "pollo@listo.com"
