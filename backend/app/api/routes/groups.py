@@ -33,8 +33,6 @@ async def group_create(
         async_session=async_session,
         user_ids=group_data.user_ids,
     )
-    print('cnt_users: ', cnt_users)
-    print('users: ', group_data.user_ids)
     if len(group_data.user_ids) != cnt_users:
         raise HTTPException(
             status_code=400, detail="One or more users not found.")
