@@ -14,7 +14,7 @@ from app.api.deps import (
 from fastapi.websockets import WebSocketState
 from sqlmodel import select
 
-router = APIRouter(prefix="/ws", tags=["groups"])
+router = APIRouter(prefix="/ws", tags=["websocket"])
 logger = logging.getLogger(__name__)
 
 
